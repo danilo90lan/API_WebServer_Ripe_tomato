@@ -2,8 +2,9 @@ from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from flask_bcrypt import Bcrypt
-from flask_jwt_extended import JWTManager
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required
 from sqlalchemy.exc import IntegrityError
+from datetime import timedelta
 
 app = Flask(__name__)
 # DB CONNECTION AREA
@@ -98,6 +99,7 @@ def drop_tables():
 def seed_database():
     add_actor()
     add_movie()
+    add_users()
     # commit to the session
     db.session.commit()
 
@@ -154,6 +156,31 @@ def add_movie():
     db.session.add_all(movies)
     print("Movies data entered correctly!")
 
+
+def add_users():
+    users = [
+        User(
+            name="User 1",
+            email="ciao@gmail.com",
+            password=bcrypt.generate_password_hash("123456").decode('utf8')
+        ),
+
+        User(
+            name="User 2",
+            email="alberto@gmail.com",
+            password=bcrypt.generate_password_hash("5678").decode('utf8'),
+            admin=True
+        ),
+
+        User(
+            name="User 3",
+            email="marco@gmail.com",
+            password=bcrypt.generate_password_hash("10998765").decode('utf8')
+        )
+    ]
+    db.session.add_all(users)
+    print("Users added succesfully!")
+
 # ROUTING AREA
 
 
@@ -165,6 +192,8 @@ def hello():
 
 
 @app.route("/actors", methods=["POST"])
+# with this decorator if a user wants to access this route needs to be autenticated with a jwt token
+@jwt_required()
 def add_actors():
     new_actors = []
     body = request.get_json()
@@ -204,6 +233,17 @@ def get_movies():
     # now we need to convert the results nto json readeble format using marshmallow schema
     return jsonify(movies_schema.dump(results))
 
+# GET ALL THE USERS
+@app.route("/users", methods=["GET"])
+def get_users():
+    statement = db.select(User)
+    results = db.session.scalars(statement)
+
+    data = users_schema.dump(results)
+    return jsonify(data)
+
+# REGISTER USER
+
 
 @app.route("/auth/register", methods=["POST"])
 def register_user():
@@ -213,7 +253,8 @@ def register_user():
         # Exctracting the password from the body of the request
         password = body_data["password"]
         # Hashing the password using bcrypt object
-        hashed_password = bcrypt.generate_password_hash(password).decode("utf8")
+        hashed_password = bcrypt.generate_password_hash(
+            password).decode('utf8')
         # Create a user instance using the User model
         user = User(
             name=body_data["name"],
@@ -225,9 +266,38 @@ def register_user():
         # Commit
         db.session.commit()
         # Return a message
-        return user_schema.dump(user),201
+        return user_schema.dump(user), 201
     except IntegrityError as e:
-        return {"error":"Email already exists"}, 400
+        return {"error": "Email already exists"}, 400
+
+# LOGIN USER
+
+
+@app.route("/auth/login", methods=["POST"])
+def login_user():
+    # Find the uer with that email
+    body = request.get_json()
+
+    # If the user exists and the password matches
+    # check if the user password is in the database
+    statement = db.select(User).filter_by(email=body.get("email"))
+    result = db.session.scalar(statement)
+
+    # check if the user exist and the password matches using check_password_hash method that takes two arguments
+    # (plain text password from the body request and hashed password from the database) 
+    if result and bcrypt.check_password_hash(result.password, body.get("password")):
+        # we create an authentication token (jwt) through the module that we imported
+        # the arguments are indentity=the id of the statement result converted to string and
+        # the expiring session time using timedelta library. (after 1 day the login expires )
+        token = create_access_token(identity=str(
+            result.id), expires_delta=timedelta(days=1))
+
+        # return the token
+        # return {"token": token, "email": result.email, "admin":result.admin }
+        return {"token":token, "user":user_schema.dump(result)}
+    # else return an error message
+    else:
+        return {"error":"Invalid email or password"},401
 
 
 if __name__ == "__main__":
