@@ -1,82 +1,9 @@
 from flask import Flask, request, jsonify
-from flask_sqlalchemy import SQLAlchemy
-from flask_marshmallow import Marshmallow
-from flask_bcrypt import Bcrypt
-from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 from sqlalchemy.exc import IntegrityError
 from datetime import timedelta
 
-app = Flask(__name__)
-# DB CONNECTION AREA
-app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql+psycopg2://tomato:123456@localhost:5432/ripe_tomato"
-# CREATE THE ECNRYPTING KEY
-app.config["JWT_SECRET_KEY"] = "secret"
-
-ma = Marshmallow(app)
-db = SQLAlchemy(app)
-# CREATE OBJECTS FOR ENCRYPTING PASSWORD
-bcrypt = Bcrypt(app)
-jwt = JWTManager(app)
-
-# ADD A USER MODEL
 
 
-class User(db.Model):
-    __tablename__ = "users"
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100))
-    email = db.Column(db.String, nullable=False, unique=True)
-    password = db.Column(db.String, nullable=False)
-    admin = db.Column(db.Boolean, default=False)
-
-# CREATE MODEL of actor table
-
-
-class Actor(db.Model):
-    __tablename__ = "actors"
-    id_actor = db.Column(db.Integer, primary_key=True)
-    actor_first_name = db.Column(db.String(100), nullable=False)
-    actor_last_name = db.Column(db.String(100), nullable=False)
-    country = db.Column(db.String(100))
-    dob = db.Column(db.Date)
-
-
-class Movie(db.Model):
-    __tablename__ = "movies"
-    id_movie = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(100), nullable=False)
-    genre = db.Column(db.String(100))
-    length = db.Column(db.String(100))
-    release_date = db.Column(db.Date)
-
-# CREATE SCHEMA MARSHMALLOW
-
-
-class UserSchema(ma.Schema):
-    class Meta:
-        fields = ("id", "name", "email", "password", "admin")
-
-
-class ActorSchema(ma.Schema):
-    class Meta:
-        fields = ("id_actor", "actor_first_name",
-                  "actor_last_name", "country", "dob")
-
-
-class MovieSchema(ma.Schema):
-    class Meta:
-        fields = ("id_movie", "title", "genre", "length", "release_date")
-
-
-# CREATE INSTANCE OF MARSHMALLOW SCHEMA
-# when we create a schema for the user we have to exclude the passwrd because
-# they dont need to be converted into a Python readable format
-user_schema = UserSchema(exclude=["password"])
-users_schema = UserSchema(many=True, exclude=["password"])
-movie_schema = MovieSchema()
-movies_schema = MovieSchema(many=True)
-actor_schema = ActorSchema()
-actors_schema = ActorSchema(many=True)
 
 # CLI COMMANDS AREA
 
@@ -353,3 +280,4 @@ def authoriseAsAdmn():
 
 if __name__ == "__main__":
     app.run(debug=True)
+    
