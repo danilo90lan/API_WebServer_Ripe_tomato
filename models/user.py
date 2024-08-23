@@ -17,4 +17,4 @@ class UserSchema(ma.Schema):
 # when we create a schema for the user we have to exclude the passwrd because
 # they dont need to be converted into a Python readable format
 user_schema = UserSchema(exclude=["password"])
-users_schema = UserSchema(many=True, exclude=["password"])
+users_schema = UserSchema(many=True)
