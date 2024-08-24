@@ -19,6 +19,8 @@ class ActorSchema(ma.Schema):
         # so we create a list of movie
         fields = ("id_actor", "actor_first_name",
                   "actor_last_name", "country", "dob", "movies")
+        
+        ordered=True
 
 
 actor_schema = ActorSchema()

@@ -25,6 +25,8 @@ def drop_tables():
 
 @db_commands.cli.command("seed")
 def seed_database():
+    # When seeding the database, make sure you’re inserting the actors into the actors table before inserting movies into the movies table.
+    # This ensures that you have valid actor_id values to associate with each movie. And then wensure actors are saved before adding movies (db.session.commit())
     add_actor()
     add_movie()
     add_users()
@@ -44,15 +46,15 @@ def add_actor():
         dob="1967-11-08")
 
     actor_three = Actor(
-        actor_first_name="Christian",
-        actor_last_name="De sica",
-        country="Italy",
+        actor_first_name="Hugh",
+        actor_last_name="Jackman",
+        country="Australia",
         dob="1979-01-17")
 
     actor_four = Actor()
-    actor_four.actor_first_name = "Claudia"
-    actor_four.actor_last_name = "Gerini"
-    actor_four.country = "Italy"
+    actor_four.actor_first_name = "Keanu"
+    actor_four.actor_last_name = "Reeves"
+    actor_four.country = "America"
     actor_four.dob = "1986-12-05"
 
     actors = [actor_one, actor_two, actor_three, actor_four]
@@ -67,24 +69,42 @@ def add_movie():
     movie_one = Movie()
     movie_two = Movie()
     movie_three = Movie()
+    movie_four = Movie()
 
     movie_one.title = "Matrix"
     movie_one.length = "180"
     movie_one.release_date = "1999-02-12"
     movie_one.genre = "Sci-Fi"
+    statement = db.select(Actor).filter_by(actor_first_name = "Keanu", actor_last_name = "Reeves")
+    actor = db.session.scalar(statement)
+    movie_one.actor_id = actor.id_actor
 
     movie_two.title = "Swordfish code"
     movie_two.length = "120"
     movie_two.release_date = "2004-02-12"
     movie_two.genre = "Action"
+    statement = db.select(Actor).filter_by(actor_first_name="Hugh", actor_last_name="Jackman")
+    actor = db.session.scalar(statement)
+    movie_two.actor_id = actor.id_actor
 
     movie_three.title = "Pirate of the Caribbean"
     movie_three.length = "180"
     movie_three.release_date = "2004-02-12"
     movie_three.genre = "Fantasy/Adventure"
+    statement = db.select(Actor).filter_by(actor_first_name="Johnny", actor_last_name="Deep")
+    actor = db.session.scalar(statement)
+    movie_three.actor_id = actor.id_actor
+
+    movie_four.title = "Iron Man"
+    movie_four.length = "120"
+    movie_four.release_date = "2008-04-21"
+    movie_four.genre = "Fantasy/Adventure"
+    statement = db.select(Actor).filter_by(actor_first_name="Tony", actor_last_name="Stark")
+    actor = db.session.scalar(statement)
+    movie_four.actor_id = actor.id_actor
 
     # adding to session
-    movies = [movie_one, movie_two, movie_three]
+    movies = [movie_one, movie_two, movie_three, movie_four]
     db.session.add_all(movies)
     # commit to the session
     db.session.commit()
