@@ -3,6 +3,8 @@ from flask import Flask
 from init import db, ma, bcrypt, jwt
 from controllers.cli_controllers import db_commands
 from controllers.auth_controller import auth_command
+from controllers.actor_controller import actor_command
+from controllers.movie_controller import movie_command
 
 def create_app():
     app = Flask(__name__)
@@ -19,4 +21,7 @@ def create_app():
     # we need to create the Blueprint for each decorator and then register in the main.py
     app.register_blueprint(db_commands)
     app.register_blueprint(auth_command)
+    app.register_blueprint(actor_command)
+    app.register_blueprint(movie_command)
+
     return app

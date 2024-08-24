@@ -23,7 +23,7 @@ class MovieSchema(ma.Schema):
     # we need to "unpack" the value of the user in order to be deserialized from marshmallow.
     # it's not a column vale so it cannot be recognize from marshmallow but since we already have the schema 
     # to unpack the value, we used it ("UserSchema") from the User model
-    actor = fields.Nested("ActorSchema", only=["id", "name", "email"])
+    actor = fields.Nested("ActorSchema", only=["id_actor", "actor_first_name", "actor_last_name"])
     class Meta:
         fields = ("id_movie", "title", "genre", "length", "release_date", "actor")
 
