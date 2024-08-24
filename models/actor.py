@@ -9,7 +9,8 @@ class Actor(db.Model):
     country = db.Column(db.String(100))
     dob = db.Column(db.Date)
 
-    movies = db.relationship("Movie", back_populates="actor")
+    # adding the constraint cascade="all, delete" to the actor relationship
+    movies = db.relationship("Movie", back_populates="actor", cascade="all, delete")
 
 class ActorSchema(ma.Schema):
     movies = fields.List(fields.Nested("MovieSchema", exclude=["actor"]))

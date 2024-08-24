@@ -26,6 +26,7 @@ class MovieSchema(ma.Schema):
     actor = fields.Nested("ActorSchema", only=["id_actor", "actor_first_name", "actor_last_name"])
     class Meta:
         fields = ("id_movie", "title", "genre", "length", "release_date", "actor")
+        ordered=True
 
 movie_schema = MovieSchema()
 movies_schema = MovieSchema(many=True)
