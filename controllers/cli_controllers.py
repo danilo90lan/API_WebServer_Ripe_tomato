@@ -28,8 +28,6 @@ def seed_database():
     add_actor()
     add_movie()
     add_users()
-    # commit to the session
-    db.session.commit()
 
 
 def add_actor():
@@ -60,6 +58,8 @@ def add_actor():
     actors = [actor_one, actor_two, actor_three, actor_four]
     #add to the session
     db.session.add_all(actors)
+    # commit to the session
+    db.session.commit()
     print("Actors data entered correctly!")
 
 
@@ -71,18 +71,23 @@ def add_movie():
     movie_one.title = "Matrix"
     movie_one.length = "180"
     movie_one.release_date = "1999-02-12"
+    movie_one.genre = "Sci-Fi"
 
     movie_two.title = "Swordfish code"
     movie_two.length = "120"
     movie_two.release_date = "2004-02-12"
+    movie_two.genre = "Action"
 
     movie_three.title = "Pirate of the Caribbean"
     movie_three.length = "180"
     movie_three.release_date = "2004-02-12"
+    movie_three.genre = "Fantasy/Adventure"
 
     # adding to session
     movies = [movie_one, movie_two, movie_three]
     db.session.add_all(movies)
+    # commit to the session
+    db.session.commit()
     print("Movies data entered correctly!")
 
 
@@ -109,4 +114,6 @@ def add_users():
         )
     ]
     db.session.add_all(users)
+    # commit to the session
+    db.session.commit()
     print("Users added succesfully!")

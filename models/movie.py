@@ -25,7 +25,7 @@ class MovieSchema(ma.Schema):
     # to unpack the value, we used it ("UserSchema") from the User model
     actor = fields.Nested("ActorSchema", only=["id", "name", "email"])
     class Meta:
-        fields = ("id_movie", "title", "genre", "length", "release_date", "actor_id")
+        fields = ("id_movie", "title", "genre", "length", "release_date", "actor")
 
 movie_schema = MovieSchema()
 movies_schema = MovieSchema(many=True)
