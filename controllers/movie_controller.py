@@ -3,6 +3,7 @@ from flask_jwt_extended import jwt_required
 from controllers.auth_controller import authoriseAsAdmn
 from init import db
 from models.movie import Movie, movies_schema
+from models.actor import Actor
 
 movie_command = Blueprint("movie", __name__, url_prefix = "/movies")
 
@@ -15,6 +16,31 @@ def get_movies():
 
     # now we need to convert the results nto json readeble format using marshmallow schema
     return jsonify(movies_schema.dump(results))
+
+
+@movie_command.route("/", methods=["POST"])
+@jwt_required()
+def add_movie():
+    movies = []
+    body_request = request.get_json()
+    for i in body_request:
+        stm = db.select(Actor).filter_by(id_actor=i.get("id_actor"))
+        result = db.session.scalar(stm)
+        if result:
+            movie = Movie (
+                title = i.get("title"),
+                genre = i.get("genre"),
+                length = i.get("length"),
+                release_date = i.get("release_date"),
+                actor_id = result.id_actor
+            )
+            movies.append(movie)
+        else:
+            return {"message":"actor id not found"}
+    
+    db.session.add_all(movies)
+    db.session.commit()
+    return jsonify({"message:": "new movies added"})
 
 
     

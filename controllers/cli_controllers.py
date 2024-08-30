@@ -103,6 +103,10 @@ def add_movie():
     actor = db.session.scalar(statement)
     movie_four.actor_id = actor.id_actor
 
+
+
+
+
     # adding to session
     movies = [movie_one, movie_two, movie_three, movie_four]
     db.session.add_all(movies)
@@ -115,7 +119,7 @@ def add_users():
     users = [
         User(
             name="User 1",
-            email="ciao@gmail.com",
+            email="cao@gmail.com",
             password=bcrypt.generate_password_hash("123456").decode('utf8'),
             admin=True
         ),

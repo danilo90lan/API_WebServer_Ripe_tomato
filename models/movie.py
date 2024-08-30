@@ -15,7 +15,8 @@ class Movie(db.Model):
 
     # if we want to fetch more information from the Foreign key other than ID only, 
     # we define a relationship between the two models
-    # First parameter is the MODEL NAME of the other table, and second parameter is the Movie fields (TABLE NAME)
+    # First parameter is the MODEL NAME (class) of the other table, and second parameter (backpopulate) 
+    # is the variable defined in actor.py "movies = db.relationship("Movie", back_populates="actor", cascade="all, delete")"
     # that we want to get from the other "side" (Actor table). It's a two ways retrieving
     actor = db.relationship("Actor", back_populates="movies")
 
