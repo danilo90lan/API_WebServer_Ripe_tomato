@@ -3,6 +3,7 @@ from init import db, bcrypt
 from models.user import User
 from models.movie import Movie
 from models.actor import Actor
+from models.director import Director
 
 # we need to create the Blueprint for each decorator and then register in the main.py
 db_commands = Blueprint("db", __name__)
@@ -27,9 +28,11 @@ def drop_tables():
 def seed_database():
     # When seeding the database, make sure you’re inserting the actors into the actors table before inserting movies into the movies table.
     # This ensures that you have valid actor_id values to associate with each movie. And then wensure actors are saved before adding movies (db.session.commit())
+    add_director()
     add_actor()
     add_movie()
     add_users()
+    
 
 
 def add_actor():
@@ -75,9 +78,16 @@ def add_movie():
     movie_one.length = "180"
     movie_one.release_date = "1999-02-12"
     movie_one.genre = "Sci-Fi"
+    # adding actor by retrieving it
     statement = db.select(Actor).filter_by(actor_first_name = "Keanu", actor_last_name = "Reeves")
     actor = db.session.scalar(statement)
-    movie_one.actor_id = actor.id_actor
+    movie_one.actor=actor
+
+    # adding director
+    statement = db.select(Director).filter_by(id_director=2)
+    director = db.session.scalar(statement)
+    movie_one.director=director
+   
 
     movie_two.title = "Swordfish code"
     movie_two.length = "120"
@@ -87,6 +97,11 @@ def add_movie():
     actor = db.session.scalar(statement)
     movie_two.actor_id = actor.id_actor
 
+    # adding director
+    statement = db.select(Director).filter_by(id_director=2)
+    director = db.session.scalar(statement)
+    movie_two.director=director
+
     movie_three.title = "Pirate of the Caribbean"
     movie_three.length = "180"
     movie_three.release_date = "2004-02-12"
@@ -94,6 +109,11 @@ def add_movie():
     statement = db.select(Actor).filter_by(actor_first_name="Johnny", actor_last_name="Deep")
     actor = db.session.scalar(statement)
     movie_three.actor_id = actor.id_actor
+
+    # adding director
+    statement = db.select(Director).filter_by(id_director=1)
+    director = db.session.scalar(statement)
+    movie_three.director=director
 
     movie_four.title = "Iron Man"
     movie_four.length = "120"
@@ -103,8 +123,10 @@ def add_movie():
     actor = db.session.scalar(statement)
     movie_four.actor_id = actor.id_actor
 
-
-
+    # adding director
+    statement = db.select(Director).filter_by(id_director=3)
+    director = db.session.scalar(statement)
+    movie_four.director=director
 
 
     # adding to session
@@ -141,3 +163,27 @@ def add_users():
     # commit to the session
     db.session.commit()
     print("Users added succesfully!")
+
+def add_director():
+        directors = [
+            Director(
+                director_first_name = "Tim",
+                director_last_name = "Burton",
+                country = "America",
+            ),
+            Director(
+                director_first_name = "James",
+                director_last_name = "Cameron",
+                country = "America",
+            ),
+             Director(
+                director_first_name = "Carlo",
+                director_last_name = "Vanzina",
+                country = "Italy",
+            )
+        ]
+
+        db.session.add_all(directors)
+        db.session.commit()
+
+        print("Directors added succesfully!")

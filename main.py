@@ -5,6 +5,7 @@ from controllers.cli_controllers import db_commands
 from controllers.auth_controller import auth_command
 from controllers.actor_controller import actor_command
 from controllers.movie_controller import movie_command
+from controllers.director_controller import director_command
 
 def create_app():
     app = Flask(__name__)
@@ -23,5 +24,6 @@ def create_app():
     app.register_blueprint(auth_command)
     app.register_blueprint(actor_command)
     app.register_blueprint(movie_command)
+    app.register_blueprint(director_command)
 
     return app
