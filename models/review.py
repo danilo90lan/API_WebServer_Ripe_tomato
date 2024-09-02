@@ -4,14 +4,14 @@ from marshmallow import fields
 class Review(db.Model):
     __tablename__="reviews"
     review_id = db.Column(db.Integer, primary_key=True)
-    message = db.Column(db.STring, nullable=False)
+    message = db.Column(db.String, nullable=False)
     date = db.Column(db.Date)
     
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
-    movie = id = db.Column(db.Integer, db.ForeignKey("movies.id_movie"), nullable=False)
+    movie_id= db.Column(db.Integer, db.ForeignKey("movies.id_movie"), nullable=False)
 
-    user = db.relationship("User", back_populate="reviews")
-    movies = db.relationship("Movie", back_populate="reviews")
+    user = db.relationship("User", back_populates="reviews")
+    movies = db.relationship("Movie", back_populates="reviews")
 
 class ReviewSchema(ma.Schema):
     user = fields.Nested("UserSchema", only=["name","email"])
