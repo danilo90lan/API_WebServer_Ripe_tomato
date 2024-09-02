@@ -4,6 +4,7 @@ from models.user import User
 from models.movie import Movie
 from models.actor import Actor
 from models.director import Director
+from models.review import Review
 
 # we need to create the Blueprint for each decorator and then register in the main.py
 db_commands = Blueprint("db", __name__)

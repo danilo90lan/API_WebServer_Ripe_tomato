@@ -4,6 +4,7 @@ from controllers.auth_controller import authoriseAsAdmn
 from init import db
 from models.movie import Movie, movies_schema
 from models.actor import Actor
+from models.director import Director
 
 movie_command = Blueprint("movie", __name__, url_prefix = "/movies")
 
@@ -32,7 +33,8 @@ def add_movie():
                 genre = i.get("genre"),
                 length = i.get("length"),
                 release_date = i.get("release_date"),
-                actor_id = result.id_actor
+                actor_id = result.id_actor,
+                director_id = i.get("director_id")
             )
             movies.append(movie)
         else:
