@@ -5,6 +5,7 @@ from models.movie import Movie
 from models.actor import Actor
 from models.director import Director
 from models.review import Review
+from datetime import date
 
 # we need to create the Blueprint for each decorator and then register in the main.py
 db_commands = Blueprint("db", __name__)
@@ -29,14 +30,7 @@ def drop_tables():
 def seed_database():
     # When seeding the database, make sure you’re inserting the actors into the actors table before inserting movies into the movies table.
     # This ensures that you have valid actor_id values to associate with each movie. And then wensure actors are saved before adding movies (db.session.commit())
-    add_director()
-    add_actor()
-    add_movie()
-    add_users()
-    
 
-
-def add_actor():
     actor_one = Actor(
         actor_first_name="Tony",
         actor_last_name="Stark",
@@ -64,12 +58,32 @@ def add_actor():
     actors = [actor_one, actor_two, actor_three, actor_four]
     #add to the session
     db.session.add_all(actors)
-    # commit to the session
-    db.session.commit()
+
     print("Actors data entered correctly!")
 
+    directors = [
+        Director(
+            director_first_name = "Tim",
+            director_last_name = "Burton",
+            country = "America",
+        ),
+        Director(
+            director_first_name = "James",
+            director_last_name = "Cameron",
+            country = "America",
+        ),
+            Director(
+            director_first_name = "Carlo",
+            director_last_name = "Vanzina",
+            country = "Italy",
+        )
+    ]
 
-def add_movie():
+    db.session.add_all(directors)
+
+    print("Directors added succesfully!")
+
+
     movie_one = Movie()
     movie_two = Movie()
     movie_three = Movie()
@@ -133,12 +147,10 @@ def add_movie():
     # adding to session
     movies = [movie_one, movie_two, movie_three, movie_four]
     db.session.add_all(movies)
-    # commit to the session
-    db.session.commit()
+
     print("Movies data entered correctly!")
 
 
-def add_users():
     users = [
         User(
             name="User 1",
@@ -161,30 +173,37 @@ def add_users():
         )
     ]
     db.session.add_all(users)
-    # commit to the session
-    db.session.commit()
+
     print("Users added succesfully!")
 
-def add_director():
-        directors = [
-            Director(
-                director_first_name = "Tim",
-                director_last_name = "Burton",
-                country = "America",
-            ),
-            Director(
-                director_first_name = "James",
-                director_last_name = "Cameron",
-                country = "America",
-            ),
-             Director(
-                director_first_name = "Carlo",
-                director_last_name = "Vanzina",
-                country = "Italy",
-            )
-        ]
 
-        db.session.add_all(directors)
-        db.session.commit()
 
-        print("Directors added succesfully!")
+    reviews = [
+        
+    Review(
+        message = "The movie was awesome!",
+        date = date.today(),
+        user = users[0],
+        movies = movies[0]
+    ),
+
+    Review(
+        message = "worst actor ever!",
+        date = date.today(),
+        user = users[1],
+        movies = movies[1]
+    ), 
+
+    Review(
+        message = "I'd would watch it again",
+        date = date.today(),
+        user = users[0],
+        movies = movies[1]
+    ) 
+    ]
+    print("Reviews added!")
+
+    db.session.add_all(reviews)
+   
+   # commit to the session
+    db.session.commit()

@@ -16,7 +16,8 @@ class UserSchema(ma.Schema):
     # unpacking reviews
     reviews = fields.List(fields.Nested("ReviewSchema", exclude=["user"]))
     class Meta:
-        fields = ("id", "name", "email", "password", "admin", "reviews")
+        fields = ("id", "name", "email", "password", "admin")
+        ordered=True
         
 
 # CREATE INSTANCE OF MARSHMALLOW SCHEMA
