@@ -4,9 +4,11 @@ from controllers.auth_controller import authoriseAsAdmn
 from init import db
 from models.movie import Movie, movies_schema
 from models.actor import Actor
-from models.director import Director
+
+from controllers.review_controller import reviews_bp
 
 movie_command = Blueprint("movie", __name__, url_prefix = "/movies")
+movie_command.register_blueprint(reviews_bp)
 
 @movie_command.route("/", methods=["GET"])
 def get_movies():

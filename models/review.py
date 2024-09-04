@@ -14,11 +14,12 @@ class Review(db.Model):
     movies = db.relationship("Movie", back_populates="reviews")
 
 class ReviewSchema(ma.Schema):
-    user = fields.Nested("UserSchema", only=["name","email"])
+    user = fields.Nested("UserSchema", only=["name"])
     movies = fields.Nested("MovieSchema", only=["id_movie","title"])
    
     class Meta:
         fields = ("review_id", "message", "date", "user", "movies", "comments")
+        ordered=True
 
-comment_schema = ReviewSchema()
-comments_schema = ReviewSchema(many=True)
+review_schema = ReviewSchema()
+reviews_schema = ReviewSchema(many=True)
